@@ -8,13 +8,11 @@ const timeZoneId = 'Asia/Jerusalem';
 
 exports.calendarController = {
     async getEvents(req, res) {
-        if (!req.session.userId) {
-            res.redirect('/')
-        } else {
-            const params = {
-                active: { calendar: true }
-            };
+        console.log(req.headers);
 
+        if (!req.session.userId) {
+            res.status(401).redirect('http://127.0.0.1:5500/wisetime-frontend/index.html')
+        } else {
             const user = req.app.locals.users[req.session.userId];
 
             var weekStart = zonedTimeToUtc(startOfWeek(new Date()), timeZoneId.valueOf());
@@ -28,13 +26,10 @@ exports.calendarController = {
                     '2021-11-28 00:00:00',
                     userTimeZone
                 );
-
-                params.events = events.value;
             } catch (err) {
                 console.log('Could not fetch events');
             }
 
-            res.render('calendar', params);
         }
     },
     getCreateEvent(req, res) {
