@@ -5,6 +5,7 @@ const authRouter = new Router();
 
 authRouter.get('/signin', authController.signIn);
 authRouter.get('/callback', authController.getToken);
+authRouter.get('/cookies', authController.setCookies);
 authRouter.get('/signout', authController.signOut);
 
 module.exports = { authRouter };
