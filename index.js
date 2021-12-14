@@ -8,10 +8,15 @@ const logger = require('morgan');
 const { indexRouter } = require('./routers/indexRouter');
 const { authRouter } = require('./routers/authRouter');
 const { calendarRouter } = require('./routers/calendarRouter');
+const { scheduleRouter } = require('./routers/scheduleRouter');
 const { msalConfig } = require('./config');
+const { taskRouter } = require('./routers/taskRouter');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+require('dotenv').config();
+require('./db_connection');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -49,6 +54,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/calendar', calendarRouter);
+app.use('/api/schedule', scheduleRouter);
+app.use('/api/tasks', taskRouter);
+
 
 app.use('*', (req, res) => {
     res.status(404).send('Page not found!');
