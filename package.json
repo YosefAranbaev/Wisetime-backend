@@ -25,6 +25,7 @@
         "express-session": "^1.17.2",
         "hbs": "^4.2.0",
         "isomorphic-fetch": "^3.0.0",
+        "mongoose": "^6.1.1",
         "path": "^0.12.7"
     }
 }

@@ -1,5 +1,5 @@
 exports.indexController = {
     getHomepage(req, res) {
-        //res.sendFile('');
+        res.render('index');
     }
 };
