@@ -1,24 +1,5 @@
 const Task = require('../models/tasks');
 
-const getDayName = (day) => {
-    switch(day) {
-        case 0: 
-            return 'sunday';
-        case 1:
-            return 'monday';
-        case 2: 
-            return 'tuesday';
-        case 3:
-            return 'wednesday';
-        case 4:
-            return 'thursday'; 
-        case 5:
-            return 'friday';
-        case 6:
-            return 'saturday'; 
-    }
-}
-
 exports.tasksController = {
     getTasks(req, res) {
         console.log("docs");
@@ -49,21 +30,18 @@ exports.tasksController = {
 
         console.log(body);
 
-        if (!(body.name && body.hour_start_time &&  body.hour_end_time && body.day && body.color)) {
-            res.status(500).send("Error saving a Outcome");
+        if (!(body.name && body.day && body.hour_start_time &&  body.hour_end_time && body.day && body.color)) {
+            res.status(500).send("Error saving an Outcome");
         } else {
-            const date = new Date(body.day);
-            const day = getDayName(date.getDay());
-
             const newTask = new Task({
                 "name": body.name,
                 "duration_time": body.duration_time,
                 "is_refferal":  body.is_refferal,
-                "day": day,
+                "day": body.day,
                 "id_of_side_user":  body.id_of_side_user,
                 "hour_start_time":  body.hour_start_time,
                 "hour_end_time":  body.hour_end_time,
-                "color":  body.color
+                "color": body.color
             });
             console.log(newTask);
 
