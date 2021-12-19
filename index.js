@@ -5,6 +5,7 @@ require('./db_connection');
 
 const { scheduleRouter } = require('./routers/scheduleRouter');
 const { taskRouter } = require('./routers/taskRouter');
+const { userRouter } = require('./routers/userRouter');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 
 app.use('/api/schedule', scheduleRouter);
 app.use('/api/tasks', taskRouter);
+app.use('/api/users', userRouter);
 
 app.use('*', (req, res) => {
     res.status(404).json({'error': 'Page Not Found'});
