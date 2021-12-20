@@ -66,14 +66,31 @@ exports.tasksController = {
                 "color":  body.color
             });
             console.log(newTask);
-
-            newTask.save().then(result => {
-                if (result) {
-                    res.status(200).redirect('http://127.0.0.1:5500/wisetime-frontend/home.html')
-                } else {
-                    res.status(500).send("Error saving a Outcome");
+            
+            Task.find({})
+            .then(docs => {
+                let is_friction=0;
+                docs.forEach(element => {
+                    if (newTask.day == element.day && ((element.hour_start_time <= newTask.hour_start_time &&
+                        newTask.hour_start_time<element.hour_end_time)
+                    ||(element.hour_start_time <= newTask.hour_end_time &&
+                        newTask.hour_end_time<element.hour_end_time)))
+                        is_friction++;
+                })   
+                if(is_friction==0)
+                newTask.save().then(result => {
+                    if (result) {
+                        res.status(200).redirect('http://127.0.0.1:5500/wisetime-frontend/home.html')
+                        // res.send("hello");
+                    } else {
+                        res.status(500).send("Error saving a Outcome");
+                    }
+                });
+                else{
+                    res.status(500).send("There is schedule frictions");
                 }
-            });
+            })
+            .catch(err => { res.status(400); res.json(`Error getting the data from db: ${err}`) });
         }
 
     }
