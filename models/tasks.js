@@ -1,4 +1,5 @@
 const {Schema, model} = require('mongoose');
+
 const taskSchema = new Schema({
     name: {type:String},
     day: {type:String},
@@ -10,6 +11,7 @@ const taskSchema = new Schema({
     color: {type:String},
 
 },{collection:'tasks'});
+
 const Task = model('Task', taskSchema)
 
 module.exports = Task;
