@@ -20,8 +20,8 @@ const userSchema = new Schema(
       hobby: { type: String },
       chores: { type: String },
     },
-    tasksId: [{
-      type: 'ObjectId',
+    tasks: [{
+      type: Schema.Types.ObjectId,
       ref: 'Task'
     }],
   },

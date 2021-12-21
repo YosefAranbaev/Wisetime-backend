@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 require('./db_connection');
+require('./models/tasks');
+require('./models/users');
 
 const { taskRouter } = require('./routers/taskRouter');
 const { constraintRouter } = require('./routers/constraintRouter');
