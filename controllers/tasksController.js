@@ -3,7 +3,7 @@ const Task = require('../models/tasks');
 
 const addTaskIdToUser = ((req, res, taskId) => {
     User.findOneAndUpdate(
-        { '_id' : req.userId },
+        { '_id': req.userId },
         { $push: { tasks: taskId }},
         (err, doc) => {
             if(err) {
@@ -16,7 +16,18 @@ const addTaskIdToUser = ((req, res, taskId) => {
 });
 
 const deleteTaskIdFromUser = (userId, taskId) => {
-    
+    User.findByIdAndUpdate(
+        { '_id': userId },
+        { $pull: { tasks: taskId }},
+        (err, doc) => {
+            console.log(err);
+            if(err) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    );
 }
 
 exports.tasksController = {
@@ -66,7 +77,13 @@ exports.tasksController = {
     },
     deleteTask(req, res) {
         Task.deleteOne({ _id: req.params.taskId })
-                .then(result => res.status(200).json(result))
-                .catch(err => res.status(500).json({ "error": "Error deleting a task" }))
+            .then(result => {
+                if(!deleteTaskIdFromUser(req.userId, req.params.taskId)) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(500).json({ "error": "Error deleting a task id" });
+                }
+            })
+            .catch(err => res.status(500).json({ "error": "Error deleting a task" }))
     },
 }
