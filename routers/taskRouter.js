@@ -3,8 +3,10 @@ const { tasksController } = require('../controllers/tasksController');
 
 const taskRouter = new Router();
 
-taskRouter.post('/',tasksController.addTask); 
 taskRouter.get('/', tasksController.getTasks); 
-// outcomesRouter.delete('/:id', outcomesController.deleteFlight); //
+taskRouter.get('/:taskId', tasksController.getTask);
+taskRouter.post('/',tasksController.addTask); 
+taskRouter.put('/:taskId', tasksController.updateTask);
+taskRouter.delete('/:taskId', tasksController.deleteTask);
 
 module.exports = { taskRouter };

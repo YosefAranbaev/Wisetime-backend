@@ -9,7 +9,10 @@ const taskSchema = new Schema({
     hour_start_time: {type:String},
     hour_end_time: {type:String},
     color: {type:String},
-
+    is_done: { 
+        type: Boolean,
+        default: false
+    }
 },{collection:'tasks'});
 
 const Task = model('Task', taskSchema)

@@ -6,25 +6,13 @@ exports.tasksController = {
         Task.find({})
             .then(docs => {
                 console.log(docs);
-                res.status(200); res.json(docs);
+                res.status(200).json(docs); 
             })
             .catch(err => { res.status(400); res.json(`Error getting the data from db: ${err}`) });
     },
-//     putFlight(req, res) {
-//         const { body } = req;
-//         Expense.updateOne({ _id: getMemberid(req.url) }, { amount: body.amount})
-//             .then(docs => {
-//                 res.status(200); res.json(docs);
-//             })
-//             .catch(err => { res.status(400); res.json(`Error updating the data from db: ${err}`) });
-//     },
-//     deleteFlight(req, res) {
-//         Expense.deleteOne({ _id: getMemberid(req.url) })
-//             .then(docs => {
-//                 res.status(200); res.json(docs);
-//             })
-//             .catch(err => { res.status(400); res.json(`Error deleting the data from db: ${err}`) });
-//     },
+    getTask(req, res) {
+        res.status(200).send('get task');
+    },
     addTask(req, res) {
         const { body } = req;
 
@@ -53,6 +41,11 @@ exports.tasksController = {
                 }
             });
         }
-
-    }
+    },
+    updateTask(req, res) {
+        res.status(200).send('update task');
+    },
+    deleteTask(req, res) {
+        res.status(200).send('delete task');
+    },
 }
