@@ -1,6 +1,5 @@
 const User = require('../models/users');
 const Task = require('../models/tasks');
-const { taskRouter } = require('../routers/taskRouter');
 
 const addTaskIdToUser = ((userId, taskId) => {
     User.findOneAndUpdate(
@@ -42,7 +41,9 @@ exports.tasksController = {
         }      
     },
     getTask(req, res) {
-        res.status(200).json({ "msg": "Get task" });
+        Task.findOne({ _id: req.params.taskId })
+            .then(docs => res.status(200).json(docs))
+            .catch(err => res.status(500).json({'error': 'Error while getting the task'}));
     },
     addTask(req, res) {
         const { body } = req;
