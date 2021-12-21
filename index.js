@@ -6,6 +6,7 @@ require('./db_connection');
 const { taskRouter } = require('./routers/taskRouter');
 const { constraintRouter } = require('./routers/constraintRouter');
 const { categoryRouter } = require('./routers/categoryRouter');
+const { userRouter } = require('./routers/userRouter');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,9 +27,22 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/users/:userId/tasks', taskRouter);
-app.use('/api/users/:userId/constraints', constraintRouter);
-app.use('/api/users/:userId/categories', categoryRouter);
+app.use('/api/users/:userId/tasks', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, taskRouter);
+
+app.use('/api/users/:userId/constraints', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, constraintRouter);
+
+app.use('/api/users/:userId/categories', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, categoryRouter);
+
+app.use('/api/users', userRouter);
 
 app.use('*', (req, res) => {
     res.status(404).json({'error': 'Page Not Found'});
