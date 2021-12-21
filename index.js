@@ -2,9 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 require('./db_connection');
+require('./models/tasks');
+require('./models/users');
 
-const { scheduleRouter } = require('./routers/scheduleRouter');
 const { taskRouter } = require('./routers/taskRouter');
+const { constraintRouter } = require('./routers/constraintRouter');
+const { categoryRouter } = require('./routers/categoryRouter');
 const { userRouter } = require('./routers/userRouter');
 
 const app = express();
@@ -26,8 +29,21 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/schedule', scheduleRouter);
-app.use('/api/tasks', taskRouter);
+app.use('/api/users/:userId/tasks', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, taskRouter);
+
+app.use('/api/users/:userId/constraints', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, constraintRouter);
+
+app.use('/api/users/:userId/categories', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, categoryRouter);
+
 app.use('/api/users', userRouter);
 
 app.use('*', (req, res) => {
