@@ -1,15 +1,16 @@
 const User = require('../models/users');
 const Task = require('../models/tasks');
+const { taskRouter } = require('../routers/taskRouter');
 
-const addTaskIdToUser = ((req, res, taskId) => {
+const addTaskIdToUser = ((userId, taskId) => {
     User.findOneAndUpdate(
-        { '_id': req.userId },
+        { '_id': userId },
         { $push: { tasks: taskId }},
         (err, doc) => {
             if(err) {
-                res.status(500).json({'error': 'Error while adding task id to user'});
+                return false;     
             } else {
-                res.status(200).redirect('http://127.0.0.1:5500/wisetime-frontend/home.html')
+                return true;
             }
         }
     )
@@ -20,7 +21,6 @@ const deleteTaskIdFromUser = (userId, taskId) => {
         { '_id': userId },
         { $pull: { tasks: taskId }},
         (err, doc) => {
-            console.log(err);
             if(err) {
                 return false;
             } else {
@@ -54,10 +54,10 @@ exports.tasksController = {
             const promise = newTask.save();
             promise.then(result => {
                 if(result) {
-                    try {
-                        addTaskIdToUser(req, res, result.id);
-                    } catch {
-                        res.status(500).json({ "error": "Error while fetching the user data" });
+                    if(!addTaskIdToUser(req.userId, result.id)) {
+                        res.status(200).redirect('http://127.0.0.1:5500/wisetime-frontend/home.html');
+                    } else {
+                        res.status(500).json({'error': 'Error while adding task id to user'});
                     } 
                 } else {
                     res.status(500).json({ "error": "Error saving a task" });
