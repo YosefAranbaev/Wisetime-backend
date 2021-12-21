@@ -15,6 +15,10 @@ const addTaskIdToUser = ((req, res, taskId) => {
     )
 });
 
+const deleteTaskIdFromUser = (userId, taskId) => {
+    
+}
+
 exports.tasksController = {
     async getTasks(req, res) {
         try {
@@ -27,13 +31,13 @@ exports.tasksController = {
         }      
     },
     getTask(req, res) {
-        res.status(200).send('get task');
+        res.status(200).json({ "msg": "Get task" });
     },
     addTask(req, res) {
         const { body } = req;
 
         if (!(body.name && body.day && body.hour_start_time &&  body.hour_end_time && body.day && body.color)) {
-            res.status(400).json({ "error": "Error saving a task" });
+            res.status(400).json({ "error": "Missing parameters" });
         } else {
             const newTask = new Task(body);
             const promise = newTask.save();
@@ -51,9 +55,18 @@ exports.tasksController = {
         }
     },
     updateTask(req, res) {
-        res.status(200).send('update task');
+        const { body } = req;
+        if (!(body.name && body.day && body.hour_start_time &&  body.hour_end_time && body.day && body.color)) {
+            res.status(400).json({ "error": "Missing parameters" });
+        } else {
+            Task.updateOne({ _id: req.params.taskId }, body)
+                .then(result => res.status(200).json(result))
+                .catch(err => res.status(500).json({ "error": "Error updating a task" }))
+        }
     },
     deleteTask(req, res) {
-        res.status(200).send('delete task');
+        Task.deleteOne({ _id: req.params.taskId })
+                .then(result => res.status(200).json(result))
+                .catch(err => res.status(500).json({ "error": "Error deleting a task" }))
     },
 }
