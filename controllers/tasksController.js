@@ -55,20 +55,20 @@ exports.tasksController = {
 
             Task.find({})
                 .then(docs => {
-                    let is_friction = 0;
+                    let isFriction = 0;
                     docs.forEach(element => {
                         if (element.is_done==false && newTask.day == element.day && ((element.hour_start_time <= newTask.hour_start_time &&
                             newTask.hour_start_time < element.hour_end_time)
                             || (element.hour_start_time <= newTask.hour_end_time &&
                                 newTask.hour_end_time < element.hour_end_time)))
-                            is_friction++;
+                                isFriction++;
                     })
-                    if (is_friction == 0) {
+                    if (isFriction == 0) {
                         const promise = newTask.save();
                         promise.then(result => {
                             if (result) {
                                 if (!addTaskIdToUser(req.userId, result.id)) {
-                                    res.status(200).redirect('http://127.0.0.1:5500/wisetime-frontend/home.html');
+                                    res.status(200).json({ 'success': 'Task added successfully' });
                                 } else {
                                     res.status(500).json({ 'error': 'Error while adding task id to user' });
                                 }
@@ -77,10 +77,10 @@ exports.tasksController = {
                             }
                         })
                     } else {
-                        res.status(403).send("There is schedule frictions");
+                        res.status(409).json({ "error": "There are schedule frictions" });
                     }
                 })
-                .catch(err => { res.status(400); res.json(`Error getting the data from db: ${err}`) });
+                .catch(err => { res.status(500); res.json(`Error getting the data from db: ${err}`) });
         }
     },
     updateTask(req, res) {
