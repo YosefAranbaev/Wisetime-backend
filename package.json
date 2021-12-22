@@ -12,15 +12,14 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "dotenv": "^10.0.0",
         "morgan": "^1.10.0",
         "nodemon": "^2.0.15"
     },
     "dependencies": {
+        "dotenv": "^10.0.0",
         "date-fns": "^2.27.0",
         "date-fns-tz": "^1.1.6",
         "express": "^4.17.1",
-        "hbs": "^4.2.0",
         "mongoose": "^6.1.1",
         "path": "^0.12.7"
     }

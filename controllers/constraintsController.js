@@ -17,7 +17,7 @@ exports.constraintsController = {
             if(err) {
                 res.status(500).json({'error': 'Error while adding constraints'});
             } else {
-                res.status(200).redirect('http://127.0.0.1:5500/wisetime-frontend/welcome2.html');
+                res.status(200).json({'success': 'Constraints added successfully'});
             }
         }) 
     }

@@ -14,7 +14,7 @@ exports.categoriesController = {
             if(err) {
                 res.status(500).json({'error': 'Error while adding categories'});
             } else {
-                res.status(200).redirect('http://127.0.0.1:5500/wisetime-frontend/home.html');
+                res.status(200).json({'success': 'Categories added successfully'});
             }
         })
     }
