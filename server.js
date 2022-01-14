@@ -1,13 +1,13 @@
 const express = require('express');
-const path = require('path');
 
 const { taskRouter } = require('./routers/taskRouter');
 const { constraintRouter } = require('./routers/constraintRouter');
 const { categoryRouter } = require('./routers/categoryRouter');
 const { userRouter } = require('./routers/userRouter');
+const { authRouter } = require('./routers/authRouter');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 if(process.env.ENV === 'development') {
     const logger = require('morgan');
@@ -39,6 +39,7 @@ app.use('/api/users/:userId/categories', (req, res, next) => {
     next();
 }, categoryRouter);
 
+app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 
 app.use('*', (req, res) => {
