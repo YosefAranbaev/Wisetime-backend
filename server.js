@@ -5,6 +5,7 @@ const { constraintRouter } = require('./routers/constraintRouter');
 const { categoryRouter } = require('./routers/categoryRouter');
 const { userRouter } = require('./routers/userRouter');
 const { authRouter } = require('./routers/authRouter');
+const { verifyToken } = require('./middleware/authJwt');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -24,6 +25,10 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/api/auth', authRouter);
+
+app.use(verifyToken);
+
 app.use('/api/users/:userId/tasks', (req, res, next) => {
     req.userId = req.params.userId;
     next();
@@ -39,7 +44,6 @@ app.use('/api/users/:userId/categories', (req, res, next) => {
     next();
 }, categoryRouter);
 
-app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 
 app.use('*', (req, res) => {
