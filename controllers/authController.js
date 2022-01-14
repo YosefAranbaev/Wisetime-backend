@@ -2,6 +2,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require('../models/users');
 
+const generateToken = (userId) => {
+    return jwt.sign({ id: userId }, process.env.SECRET, {
+        expiresIn: 24*60*60
+    });
+};
+
 exports.authController = {
     async signup(req, res) {
         const { body } = req;
@@ -18,7 +24,12 @@ exports.authController = {
     
             newUser.save().then(result => {
                 if (result) {
-                    res.status(200).json({"success": "User added successfully"});
+                    res.status(200).send({
+                        id: result.id,
+                        username: body.name,
+                        email: body.email,
+                        accessToken: generateToken(result.id)
+                    });
                 } else {
                     res.status(500).json({"error": "Error adding a user"});
                 }
@@ -41,20 +52,19 @@ exports.authController = {
                       message: "Invalid Password!"
                     });
                 } else {
-                    const token = jwt.sign({ id: user._id }, process.env.SECRET, {
-                        expiresIn: 24*60*60
-                    });
-        
                     res.status(200).send({
                         id: user._id,
                         username: user.name,
                         email: user.email,
-                        accessToken: token
+                        accessToken: generateToken(user._id)
                     });
                 }
             })
             .catch(err => {
                 res.status(500).json({ 'error': 'Error while getting the user' })
             });
+    },
+    signout(req, res) {
+
     }
 }
