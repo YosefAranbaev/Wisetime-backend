@@ -3,22 +3,27 @@ const bcrypt = require("bcryptjs");
 const User = require('../models/users');
 
 exports.authController = {
-    signup(req, res) {
+    async signup(req, res) {
         const { body } = req;
 
-        const newUser = new User({
-            'name': body.name,
-            'email': body.email,
-            'password': bcrypt.hashSync(body.password, 8)
-        });
-
-        newUser.save().then(result => {
-            if (result) {
-                res.status(200).json({"success": "User added successfully"});
-            } else {
-                res.status(500).json({"error": "Error adding a user"});
-            }
-        });
+        const user = await User.findOne({ email: body.email });
+        if(user) {
+            res.status(400).json({"error": "User with this email already exists"});
+        } else {
+            const newUser = new User({
+                'name': body.name,
+                'email': body.email,
+                'password': bcrypt.hashSync(body.password, 8)
+            });
+    
+            newUser.save().then(result => {
+                if (result) {
+                    res.status(200).json({"success": "User added successfully"});
+                } else {
+                    res.status(500).json({"error": "Error adding a user"});
+                }
+            });
+        }
     },
     signin(req, res) {
         const { body } = req;
@@ -48,6 +53,8 @@ exports.authController = {
                     });
                 }
             })
-            .catch(err => res.status(500).json({ 'error': 'Error while getting the user' }));
+            .catch(err => {
+                res.status(500).json({ 'error': 'Error while getting the user' })
+            });
     }
 }
