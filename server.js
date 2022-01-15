@@ -1,13 +1,15 @@
 const express = require('express');
-const path = require('path');
+const cors = require('cors');
 
 const { taskRouter } = require('./routers/taskRouter');
 const { constraintRouter } = require('./routers/constraintRouter');
 const { categoryRouter } = require('./routers/categoryRouter');
 const { userRouter } = require('./routers/userRouter');
+const { authRouter } = require('./routers/authRouter');
+const { verifyToken } = require('./middleware/authJwt');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 if(process.env.ENV === 'development') {
     const logger = require('morgan');
@@ -17,12 +19,11 @@ if(process.env.ENV === 'development') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
+app.use(cors());
+
+app.use('/api/auth', authRouter);
+
+app.use(verifyToken);
 
 app.use('/api/users/:userId/tasks', (req, res, next) => {
     req.userId = req.params.userId;

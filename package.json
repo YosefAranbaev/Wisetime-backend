@@ -16,11 +16,11 @@
         "nodemon": "^2.0.15"
     },
     "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
         "dotenv": "^10.0.0",
-        "date-fns": "^2.27.0",
-        "date-fns-tz": "^1.1.6",
         "express": "^4.17.1",
-        "mongoose": "^6.1.1",
-        "path": "^0.12.7"
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^6.1.1"
     }
 }
