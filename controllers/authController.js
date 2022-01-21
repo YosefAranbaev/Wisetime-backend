@@ -17,7 +17,7 @@ exports.authController = {
             res.status(400).json({"error": "User with this email already exists"});
         } else {
             const newUser = new User({
-                'name': body.name,
+                'name': body.username,
                 'email': body.email,
                 'password': bcrypt.hashSync(body.password, 8)
             });
@@ -26,7 +26,7 @@ exports.authController = {
                 if (result) {
                     res.status(200).send({
                         id: result.id,
-                        username: body.name,
+                        username: body.username,
                         email: body.email,
                         accessToken: generateToken(result.id)
                     });
@@ -61,6 +61,7 @@ exports.authController = {
                 }
             })
             .catch(err => {
+                console.log(err)
                 res.status(500).json({ 'error': 'Error while getting the user' })
             });
     },

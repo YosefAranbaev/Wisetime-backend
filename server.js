@@ -24,6 +24,7 @@ app.use(cors());
 app.use('/api/auth', authRouter);
 
 app.use(verifyToken);
+app.use('/api/validate', (req, res) => res.status(200).json({'success': 'Access Token is valid'}));
 
 app.use('/api/users/:userId/tasks', (req, res, next) => {
     req.userId = req.params.userId;
