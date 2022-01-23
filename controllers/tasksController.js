@@ -34,7 +34,6 @@ const deleteTaskIdFromUser = (userId, taskId) => {
         }
     );
 }
-// const found = array1.find(element => element > 10);
 const setTimedtasksToarray = (startTime, endTime, timeArr) => {
     for (const element of hours) {
         if (startTime <= element && element < endTime) {
@@ -58,7 +57,7 @@ const getValidstartAndendTime = (dayConstrain, category) => {
         if (a[1] < "12:00")
             a[0] = "00:00";
         if (a[1] > "17:00")
-            a[1] = "17:00"
+            a[1] = "16:45"
     }
     if (category == 4) {    //17:00-23:00
         if (a[0] < "17:00")
@@ -83,10 +82,38 @@ const addFifteenMinutes = (arr) => {
             }
         }
     }
-    // console.log(arr);
     return arr;
 }
-const findFreetime = (timeRange, arrTime, dauration) => {
+const addNewTask = (tasks, body, day, userId, res) => {
+    const obj = {
+        "name": body.name,
+        "is_refferal": body.is_refferal,
+        "color": body.color,
+        "is_done": body.is_done,
+        "hour_start_time": tasks[0][0],
+        "hour_end_time": tasks[0][1],
+        "day": days[day]
+    }
+    const newTask = new Task(obj);
+    const promise = newTask.save();
+    promise.then(result => {
+        if (result) {
+            if (!addTaskIdToUser(userId, result.id)) {
+                // res.status(200).json({ 'success': 'Task added successfully' });
+                return true;
+            } else {
+                return false;
+                // res.status(500).json({ 'error': 'Error while adding task id to user' });
+            }
+        } else {
+            return false;
+            // res.status(500).json({ "error": "Error saving a task" });
+        }
+    })
+    console.log(obj);
+    return true;
+}
+const findFreetime = (timeRange, arrTime, dauration, body, day, userId, res) => {
     let arr = [];
     for (const element of hours) {
         if (timeRange[0] <= element && element <= timeRange[1] && arrTime[element] == false) {
@@ -124,11 +151,14 @@ const findFreetime = (timeRange, arrTime, dauration) => {
             }
         }
     }
-    tasks = addFifteenMinutes(tasks);
-    console.log(tasks);
+    if (tasks[0]) {
+        tasks = addFifteenMinutes(tasks);
+        if (addNewTask(tasks, body, day, userId, res) == false)
+            throw "error saving task";
+    }
     return dauration;
 }
-const freeTimearr = (usersTask, body) => {
+const freeTimearr = (usersTask, body, userId, res) => {
     let arr = [[], [], [], [], [], [], []];
     let dauration = body.dauration;
     for (const ar of arr) {
@@ -144,12 +174,15 @@ const freeTimearr = (usersTask, body) => {
         // console.log(timeRange);
         if (timeRange[0] != "00:00" && dauration > 0) {
             const day = days.findIndex((e) => e === d);
-            dauration = findFreetime(timeRange, arr[day], dauration)
+            try {
+                dauration = findFreetime(timeRange, arr[day], dauration, body, day, userId, res)
+            }
+            catch (err) {
+                throw err;
+            }
         }
     }
-
-
-    return arr;
+    return dauration;
 }
 exports.tasksController = {
     async getTasks(req, res) {
@@ -170,10 +203,19 @@ exports.tasksController = {
     async addTask(req, res) {
         const { body } = req;
         const userDocument = await User.findById(req.userId).populate({ path: 'tasks' });
-        const freeTime = freeTimearr(userDocument, body);
+        try {
+            const dauration = freeTimearr(userDocument, body, req.userId, res);
+            if (dauration == 0)
+                res.status(200).json(userDocument);
+            else{
+                res.status(409).json(`There left ${dauration} hours `);
+            }
+        }
+        catch (err) {
+            res.status(500).json(err);
+        }
         // freeTime["09:00"]=true;
         // console.log(freeTime)
-        res.status(200).json(userDocument);
 
         // User.findOne(
         //     { '_id': req.userId },
