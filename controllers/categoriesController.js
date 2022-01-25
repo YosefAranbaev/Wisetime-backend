@@ -17,5 +17,13 @@ exports.categoriesController = {
                 res.status(200).json({'success': 'Categories added successfully'});
             }
         })
+    },
+    getCategories(req, res) {
+        const query = { '_id' : req.userId };
+        User.findOne(query)
+            .then(user => {
+                res.status(200).json(user.categories);
+            })
+            .catch(err => res.status(500).json({'error': 'error while getting user'}));
     }
 }
