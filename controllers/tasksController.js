@@ -166,8 +166,10 @@ const freeTimearr = (usersTask, body, userId, res) => {
             ar[element] = false;
     }
     for (const element of usersTask.tasks) {
-        const day = days.findIndex((e) => e === element.day);
-        setTimedtasksToarray(element.hour_start_time, element.hour_end_time, arr[day]);
+        if (element.is_done === false) {
+            const day = days.findIndex((e) => e === element.day);
+            setTimedtasksToarray(element.hour_start_time, element.hour_end_time, arr[day]);
+        }
     }
     for (const d of days) {
         let timeRange = getValidstartAndendTime(usersTask.constraints[d], body.category);
@@ -207,7 +209,7 @@ exports.tasksController = {
             const dauration = freeTimearr(userDocument, body, req.userId, res);
             if (dauration == 0)
                 res.status(200).json(userDocument);
-            else{
+            else {
                 res.status(409).json(`There left ${dauration} hours `);
             }
         }
