@@ -7,14 +7,15 @@ const { categoryRouter } = require('./routers/categoryRouter');
 const { userRouter } = require('./routers/userRouter');
 const { authRouter } = require('./routers/authRouter');
 const { verifyToken } = require('./middleware/authJwt');
+const { inboxRouter } = require('./routers/inboxRouter');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-// if(process.env.ENV === 'development') {
+if(process.env.ENV === 'development') {
     const logger = require('morgan');
     app.use(logger('dev'));
-// }
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +24,7 @@ app.use(cors());
 
 app.use('/api/auth', authRouter);
 
-// app.use(verifyToken);
+app.use(verifyToken);
 app.use('/api/validate', (req, res) => res.status(200).json({'success': 'Access Token is valid'}));
 
 app.use('/api/users/:userId/tasks', (req, res, next) => {
@@ -42,6 +43,7 @@ app.use('/api/users/:userId/categories', (req, res, next) => {
 }, categoryRouter);
 
 app.use('/api/users', userRouter);
+app.use('/api/inbox', inboxRouter);
 
 app.use('*', (req, res) => {
     res.status(404).json({'error': 'Page Not Found'});
