@@ -5,5 +5,5 @@ const inboxRouter = new Router();
 
 inboxRouter.post('/', inboxController.addInboxtask); 
 inboxRouter.get('/', inboxController.gettasks);
-
+inboxRouter.delete('/:taskId', inboxController.deleteTask);
 module.exports = { inboxRouter };
