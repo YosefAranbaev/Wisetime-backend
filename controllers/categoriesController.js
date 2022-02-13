@@ -7,7 +7,8 @@ exports.categoriesController = {
             'categories.study':  req.body.study,
             'categories.work':   req.body.work,
             'categories.hobby':  req.body.hobby,
-            'categories.chores': req.body.chores
+            'categories.chores': req.body.chores,
+            'categories.other': req.body.other
         };
 
         User.findOneAndUpdate(query, newData, {upsert: true}, (err, doc) => {

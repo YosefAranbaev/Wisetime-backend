@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const { taskRouter } = require('./routers/taskRouter');
+const { statisticsRouter } = require('./routers/statisticsRouter');
 const { constraintRouter } = require('./routers/constraintRouter');
 const { categoryRouter } = require('./routers/categoryRouter');
 const { userRouter } = require('./routers/userRouter');
@@ -40,6 +41,11 @@ app.use('/api/users/:userId/categories', (req, res, next) => {
     req.userId = req.params.userId;
     next();
 }, categoryRouter);
+
+app.use('/api/users/:userId/statistics', (req, res, next) => {
+    req.userId = req.params.userId;
+    next();
+}, statisticsRouter);
 
 app.use('/api/users', userRouter);
 
