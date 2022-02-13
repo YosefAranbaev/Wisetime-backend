@@ -8,6 +8,7 @@ const { categoryRouter } = require('./routers/categoryRouter');
 const { userRouter } = require('./routers/userRouter');
 const { authRouter } = require('./routers/authRouter');
 const { verifyToken } = require('./middleware/authJwt');
+const { inboxRouter } = require('./routers/inboxRouter');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -48,6 +49,7 @@ app.use('/api/users/:userId/statistics', (req, res, next) => {
 }, statisticsRouter);
 
 app.use('/api/users', userRouter);
+app.use('/api/inbox', inboxRouter);
 
 app.use('*', (req, res) => {
     res.status(404).json({'error': 'Page Not Found'});
