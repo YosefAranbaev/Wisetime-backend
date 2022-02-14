@@ -3,6 +3,7 @@ const Inbox = require('../models/inbox');
 exports.inboxController = {
     addInboxtask(req, res) {
         const { body } = req;
+        console.log(body)
         const newInboxtask = new Inbox(body);
         newInboxtask.save().then(result => {
             if (result) {
