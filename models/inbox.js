@@ -9,6 +9,7 @@ const inboxSchema = new Schema({
     name_of_side_user: {type:String},
     color: {type:String},
     task_type: {type:Number},
+    category: {type:String}
 },{collection:'inbox'});
 
 const Inbox = model('Inbox', inboxSchema)

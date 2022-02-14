@@ -1,44 +1,50 @@
 const axios = require('axios');
 const User = require('../models/users');
 
-const buildChart = () => {
+const buildChart = (tasksDone, allTasks) => {
     return {  
         "backgroundColor": "transparent",
-        "width": 150,
-        "height": 200,
+        "width": 198,
+        "height": 180,
         "format": "svg",
         "chart": {
-            "type": "bar",
-            "data": {
-                "labels": ["Study", "Work", "Chores", "Hobby", "Other"],
-                "datasets": [
+            type: 'bar',
+            data: {
+              labels: ['Study', 'Work', 'Chores', 'Hobby'],
+              datasets: [
                 {
-                    "label": "Tasks created",
-                    "data": [1, 5, 8, 0, 20],
-                    "backgroundColor": "rgba(54, 162, 235, 0.5)",
-                    "borderColor": "rgb(54, 162, 235)",
-                    "borderWidth": 1
+                  label: 'Done',
+                  backgroundColor: 'rgb(32,178,170)',
+                  data: allTasks,
+                },
+                {
+                  label: 'All Tasks',
+                  backgroundColor: 'rgb(238,211,211)',
+                  data: tasksDone,
                 }
-                ]
+              ],
             },
-            "options": {
-                "plugins": {
-                "datalabels": {
-                    "anchor": "center",
-                    "align": "center",
-                    "color": "#fff",
-                    "font": {
-                        "weight": "bold",
-                        "size": 6
-                    }
-                }
-                }
-            }
+            options: {
+              scales: {
+                xAxes: [
+                  {
+                    stacked: true,
+                  },
+                ],
+                yAxes: [
+                  {
+                    stacked: true,
+                  },
+                ],
+              },
+            },
         }
     }
 };
 
-const buildGauge = () => {
+const buildGauge = (tasksDone, allTasks) => {
+    const percent = allTasks === 0 ? 0 : (tasksDone/allTasks*100).toFixed(1);
+    
     return {
         "backgroundColor": "transparent",
         "width": 150,
@@ -49,7 +55,7 @@ const buildGauge = () => {
         "data": {
             "datasets": [{
             "label": "foo",
-            "data": [12, 88],
+            "data": [tasksDone, allTasks-tasksDone],
             "backgroundColor": [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(0, 0, 0, 0.1)"
@@ -74,7 +80,7 @@ const buildGauge = () => {
                                 }
                             },
                             {
-                                "text": "\n12%",
+                                "text": `\n${percent}%`,
                                 "font": {
                                 "size": "20"
                                 }
@@ -89,19 +95,61 @@ const buildGauge = () => {
 
 exports.statisticsController = {
     getChart(req, res) {
-        axios.post('https://quickchart.io/chart', buildChart() )
-        .then(response => {
-            res.status(200).json({'chart': response.data});
-        }).catch(error => {
-            res.status(500).json({'error': error});
-        })
+        User.findById(req.userId).populate({ path: 'tasks' })
+            .then(user => {
+                const tasksDone = [0, 0, 0, 0];
+                const allTasks = [0, 0, 0, 0];
+
+                for(const task of user.tasks) {
+                    if(task.category) {
+                        if(task.category === 'study') {
+                            allTasks[0]++;
+                            if(task.is_done)    tasksDone[0]++;
+                        } else if(task.category === 'work') {
+                            allTasks[1]++;
+                            if(task.is_done)    tasksDone[1]++;
+                        } else if(task.category === 'chores') {
+                            allTasks[2]++;
+                            if(task.is_done)    tasksDone[2]++;
+                        } else if(task.category === 'hobby') {
+                            allTasks[3]++;
+                            if(task.is_done)    tasksDone[3]++;
+                        }
+                    }
+                }
+
+                console.log(tasksDone)
+                console.log(allTasks)
+
+                axios.post('https://quickchart.io/chart', buildChart(tasksDone, allTasks) )
+                    .then(response => {
+                        res.status(200).json({'chart': response.data});
+                    }).catch(error => {
+                        res.status(500).json({'error': error});
+                    })
+
+            })
+            .catch(err => res.status(500).json({'error': 'error while getting user'}));
     },
     getGauge(req, res) {
-        axios.post('https://quickchart.io/chart', buildGauge() )
-        .then(response => {
-            res.status(200).json({'chart': response.data});
-        }).catch(error => {
-            res.status(500).json({'error': error});
-        })
+        User.findById(req.userId).populate({ path: 'tasks' })
+            .then(user => {
+                let tasksNumber = user.tasks.length;
+                let tasksDoneNumber = 0;
+                for(const task of user.tasks) {
+                    if(task.is_done === true) {
+                        tasksDoneNumber++;
+                    }
+                }
+                axios.post('https://quickchart.io/chart', buildGauge(tasksDoneNumber, tasksNumber))
+                    .then(response => {
+                        res.status(200).json({'chart': response.data});
+                    })
+                    .catch(error => {
+                        res.status(500).json({'error': error});
+                    })
+
+            })
+            .catch(err => res.status(500).json({'error': 'error while getting user'}));
     }
 }

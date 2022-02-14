@@ -93,8 +93,10 @@ const addNewTask = (tasks, body, day, userId, res) => {
         "is_done": body.is_done,
         "hour_start_time": tasks[0][0],
         "hour_end_time": tasks[0][1],
-        "day": days[day]
+        "day": days[day],
+        "category": body.categoryName
     }
+    
     const newTask = new Task(obj);
     const promise = newTask.save();
     promise.then(result => {
@@ -108,7 +110,7 @@ const addNewTask = (tasks, body, day, userId, res) => {
             return false;
         }
     })
-    console.log(obj);
+
     return true;
 }
 const findFreetime = (timeRange, arrTime, dauration, body, day, userId, res) => {
@@ -171,7 +173,6 @@ const freeTimearr = (usersTask, body, userId, res) => {
     }
     for (const d of days) {
         let timeRange = getValidstartAndendTime(usersTask.constraints[d], body.category);
-        // console.log(timeRange);
         if (timeRange[0] != "00:00" && dauration > 0) {
             const day = days.findIndex((e) => e === d);
             try {

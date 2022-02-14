@@ -15,7 +15,8 @@ const taskSchema = new Schema({
     is_done: { 
         type: Boolean,
         default: false
-    }
+    },
+    category: {type:String}
 },{collection:'tasks'});
 
 const Task = model('Task', taskSchema)
