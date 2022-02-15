@@ -117,7 +117,6 @@ exports.statisticsController = {
                         }
                     }
                 }
-
                 for(let i=0; i<allTasks.length; i++) {
                     allTasks[i] -= tasksDone;
                 }
