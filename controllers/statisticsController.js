@@ -57,8 +57,8 @@ const buildGauge = (tasksDone, allTasks) => {
             "label": "foo",
             "data": [tasksDone, allTasks-tasksDone],
             "backgroundColor": [
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(0, 0, 0, 0.1)"
+                "rgba(32, 178, 170, 1)",
+                "rgba(238,211,211, 1)"
             ],
             "textcolor":["#000555","#555555"],
             "borderWidth": 0
@@ -117,9 +117,6 @@ exports.statisticsController = {
                         }
                     }
                 }
-
-                console.log(tasksDone)
-                console.log(allTasks)
 
                 axios.post('https://quickchart.io/chart', buildChart(tasksDone, allTasks) )
                     .then(response => {
