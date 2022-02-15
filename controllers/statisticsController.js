@@ -117,6 +117,9 @@ exports.statisticsController = {
                         }
                     }
                 }
+                for(let i=0; i<allTasks.length; i++) {
+                    allTasks[i] -= tasksDone;
+                }
 
                 axios.post('https://quickchart.io/chart', buildChart(tasksDone, allTasks) )
                     .then(response => {
