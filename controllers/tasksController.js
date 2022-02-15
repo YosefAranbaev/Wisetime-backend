@@ -7,6 +7,7 @@ const hours = ["07:00", "07:15", "07:30", "07:45", "08:00", "08:15", "08:30", "0
     , "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45", "18:00", "18:15", "18:30", "18:45", "19:00"
     , "19:15", "19:30", "19:45", "20:00", "20:15", "20:30", "20:45", "21:00", "21:15", "21:30", "21:45", "22:00"
     , "22:15", "22:30", "22:45", "23:00"];
+    
 const addTaskIdToUser = ((userId, taskId) => {
     User.findOneAndUpdate(
         { '_id': userId },
@@ -92,25 +93,24 @@ const addNewTask = (tasks, body, day, userId, res) => {
         "is_done": body.is_done,
         "hour_start_time": tasks[0][0],
         "hour_end_time": tasks[0][1],
-        "day": days[day]
+        "day": days[day],
+        "category": body.categoryName
     }
+    
     const newTask = new Task(obj);
     const promise = newTask.save();
     promise.then(result => {
         if (result) {
             if (!addTaskIdToUser(userId, result.id)) {
-                // res.status(200).json({ 'success': 'Task added successfully' });
                 return true;
             } else {
                 return false;
-                // res.status(500).json({ 'error': 'Error while adding task id to user' });
             }
         } else {
             return false;
-            // res.status(500).json({ "error": "Error saving a task" });
         }
     })
-    console.log(obj);
+
     return true;
 }
 const findFreetime = (timeRange, arrTime, dauration, body, day, userId, res) => {
@@ -173,7 +173,6 @@ const freeTimearr = (usersTask, body, userId, res) => {
     }
     for (const d of days) {
         let timeRange = getValidstartAndendTime(usersTask.constraints[d], body.category);
-        // console.log(timeRange);
         if (timeRange[0] != "00:00" && dauration > 0) {
             const day = days.findIndex((e) => e === d);
             try {
@@ -216,54 +215,6 @@ exports.tasksController = {
         catch (err) {
             res.status(500).json(err);
         }
-        // freeTime["09:00"]=true;
-        // console.log(freeTime)
-
-        // User.findOne(
-        //     { '_id': req.userId },
-        //     (err, doc) => {
-        //         if (err) {
-        //             return false;
-        //         } else {
-        //             console.log(doc)
-        //             res.status(200).json(doc.tasks);
-        //         }
-        //     })
-
-        // if (!(body.name && body.day && body.hour_start_time && body.hour_end_time && body.day && body.color)) {
-        //     res.status(400).json({ "error": "Missing parameters" });
-        // } else {
-        //     const newTask = new Task(body);
-
-        //     Task.find({})
-        //         .then(docs => {
-        //             let isFriction = 0;
-        //             docs.forEach(element => {
-        //                 if (element.is_done==false && newTask.day == element.day && ((element.hour_start_time <= newTask.hour_start_time &&
-        //                     newTask.hour_start_time < element.hour_end_time)
-        //                     || (element.hour_start_time <= newTask.hour_end_time &&
-        //                         newTask.hour_end_time < element.hour_end_time)))
-        //                         isFriction++;
-        //             })
-        //             if (isFriction == 0) {
-        //                 const promise = newTask.save();
-        //                 promise.then(result => {
-        //                     if (result) {
-        //                         if (!addTaskIdToUser(req.userId, result.id)) {
-        //                             res.status(200).json({ 'success': 'Task added successfully' });
-        //                         } else {
-        //                             res.status(500).json({ 'error': 'Error while adding task id to user' });
-        //                         }
-        //                     } else {
-        //                         res.status(500).json({ "error": "Error saving a task" });
-        //                     }
-        //                 })
-        //             } else {
-        //                 res.status(409).json({ "error": "There are schedule frictions" });
-        //             }
-        //         })
-        //         .catch(err => { res.status(500); res.json(`Error getting the data from db: ${err}`) });
-        // }
     },
     updateTask(req, res) {
         const { body } = req;

@@ -3,7 +3,7 @@ const { inboxController } = require('../controllers/inboxController');
 
 const inboxRouter = new Router();
 
-inboxRouter.post('/', inboxController.addInboxtask); 
 inboxRouter.get('/', inboxController.gettasks);
+inboxRouter.post('/', inboxController.addInboxtask); 
 inboxRouter.delete('/:taskId', inboxController.deleteTask);
 module.exports = { inboxRouter };

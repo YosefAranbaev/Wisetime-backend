@@ -18,7 +18,6 @@ exports.usersController = {
         const { body } = req;
         User.findOne({ email: req.params.userEmail })
             .then(result => {
-                console.log(req.params.userEmail);
                 res.status(200).json(result);
             })
             .catch(err => res.status(500).json({ 'error': 'error while getting user' }));
