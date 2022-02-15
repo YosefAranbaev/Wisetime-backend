@@ -1,7 +1,7 @@
 const axios = require('axios');
 const User = require('../models/users');
 
-const buildChart = (tasksDone, allTasks) => {
+const buildChart = (allTasks, tasksDone) => {
     return {  
         "backgroundColor": "transparent",
         "width": 198,
@@ -117,6 +117,7 @@ exports.statisticsController = {
                         }
                     }
                 }
+
                 for(let i=0; i<allTasks.length; i++) {
                     allTasks[i] -= tasksDone;
                 }
